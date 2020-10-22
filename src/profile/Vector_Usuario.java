@@ -1,26 +1,26 @@
 package profile;
 
-import java.util.ArrayList;
-import java.util.List;
+
+import java.util.Vector;
 
 import exceptions.UJCException;
 import exceptions.UNCException;
 
-public class List_Usuario implements IRepositorioUsuario {
+public class Vector_Usuario implements IRepositorioUsuario {
 
-	List<Perfil> list = new ArrayList<Perfil>();
+	Vector<Perfil> vetor = new Vector<Perfil>();
 
 	public void cadastrar(Perfil usuario) throws UJCException {
-		if (list.contains(usuario)) {
+		if (vetor.contains(usuario)) {
 			throw new UJCException(usuario);
 		} else {
-			list.add(usuario);
+			vetor.add(usuario);
 		}
 	}
 
 	@Override
 	public Perfil buscar(String usuario) {
-		for (Perfil obj : list) {
+		for (Perfil obj : vetor) {
 			if (obj.getUsuario().equals(usuario)) {
 				return obj;
 			}
@@ -32,10 +32,10 @@ public class List_Usuario implements IRepositorioUsuario {
 	@Override
 	// MUDAR ATUALIZAR
 	public void atualizar(Perfil usuario) throws UNCException {
-		if (!list.contains(usuario)) {
+		if (!vetor.contains(usuario)) {
 			throw new UNCException(usuario);
 		}
-		for (Perfil obj : list) {
+		for (Perfil obj : vetor) {
 			if (obj.equals(usuario)) {
 				obj = usuario;
 			}
