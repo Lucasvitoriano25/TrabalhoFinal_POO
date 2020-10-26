@@ -17,13 +17,9 @@ public class MyTwitter implements ITwitter {
 
 	@Override
 	public void criarPerfil(Perfil usuario) throws PEException, UJCException {
-		if (Banco_de_Dados.buscar(usuario.getUsuario()) != null) {
-
+		if (Banco_de_Dados.buscar(usuario.getUsuario()) == null) {
 			Banco_de_Dados.cadastrar(usuario);
-
-		} else
-
-		{
+		} else {
 			throw new PEException(usuario);
 		}
 	}
@@ -33,50 +29,62 @@ public class MyTwitter implements ITwitter {
 		if (Banco_de_Dados.buscar(usuario) == null) {
 			throw new PIException(usuario);
 		}
-		if (Banco_de_Dados.buscar(usuario).isAtivo() != true) {
+		if (Banco_de_Dados.buscar(usuario).isAtivo() == false) {
 			throw new PDException(usuario);
 		}
-
 		Banco_de_Dados.buscar(usuario).setAtivo(false);
 
 	}
 
 	@Override
+	public void removerperfil(String usuario) throws PIException {
+		Banco_de_Dados.remover(usuario);
+
+	}
+
+	@Override
 	public void tweetar(String usuario, String mensagem) throws PIException, MFPException, PDException {
-		if (Banco_de_Dados.buscar(usuario).isAtivo() == false) {
-			throw new PDException(usuario);
-		}
 		if (Banco_de_Dados.buscar(usuario) == null) {
 			throw new PIException(usuario);
 		}
-		if (mensagem.length() >= 140) {
+		if (Banco_de_Dados.buscar(usuario).isAtivo() == false) {
+			throw new PDException(usuario);
+		}
+
+		if (mensagem.length() >= 140 || mensagem.length() < 1) {
 			throw new MFPException();
+		}
+		Tweet tweet = new Tweet(usuario, mensagem);
+		Banco_de_Dados.buscar(usuario).addTweet(tweet);
+		for (Perfil obj : Banco_de_Dados.buscar(usuario).getSeguidores()) {
+			obj.addTweet(tweet);
 		}
 	}
 
 	@Override
 	public Vector<Tweet> timeline(String usuario) throws PIException, PDException {
-		if (Banco_de_Dados.buscar(usuario).isAtivo() == false) {
-			throw new PDException(usuario);
-		}
 		if (Banco_de_Dados.buscar(usuario) == null) {
 			throw new PIException(usuario);
 		}
+		if (Banco_de_Dados.buscar(usuario).isAtivo() == false) {
+			throw new PDException(usuario);
+		}
+
 		return Banco_de_Dados.buscar(usuario).getTimeline();
 	}
 
 	@Override
 	public Vector<Tweet> tweets(String usuario) throws PIException, PDException {
-		// TODO Auto-generated method stub
-		if (Banco_de_Dados.buscar(usuario).isAtivo() == false) {
-			throw new PDException(usuario);
-		}
+		Vector<Tweet> aux = new Vector<>();
+
 		if (Banco_de_Dados.buscar(usuario) == null) {
 			throw new PIException(usuario);
 		}
-		Vector<Tweet> aux = new Vector<>();
+		if (Banco_de_Dados.buscar(usuario).isAtivo() == false) {
+			throw new PDException(usuario);
+		}
 		for (Tweet obj : Banco_de_Dados.buscar(usuario).getTimeline()) {
-			if (obj.getUsuario() == usuario) {
+			if (obj.getUsuario().equals(usuario)) {
 				aux.add(obj);
 			}
 		}
@@ -85,13 +93,17 @@ public class MyTwitter implements ITwitter {
 
 	@Override
 	public void seguir(String seguidor, String seguido) throws SIException, PDException, PIException {
-		String retorno = seguidor + seguido;
-
-		if (seguidor == null && seguido == null) {
-			throw new PIException(retorno);
+		if (Banco_de_Dados.buscar(seguidor) == null) {
+			throw new PIException(seguidor);
 		}
-		if (Banco_de_Dados.buscar(seguido).isAtivo() == false && Banco_de_Dados.buscar(seguidor).isAtivo() == false) {
-			throw new PDException(retorno);
+		if (Banco_de_Dados.buscar(seguido) == null) {
+			throw new PIException(seguido);
+		}
+		if (Banco_de_Dados.buscar(seguido).isAtivo() == false) {
+			throw new PDException(seguido);
+		}
+		if (Banco_de_Dados.buscar(seguidor).isAtivo() == false) {
+			throw new PDException(seguidor);
 		}
 		if (seguidor == seguido) {
 			throw new SIException();
@@ -102,7 +114,7 @@ public class MyTwitter implements ITwitter {
 
 	@Override
 	public int numeroSeguidores(String usuario) throws PDException, PIException {
-		
+
 		if (Banco_de_Dados.buscar(usuario) == null) {
 			throw new PIException(usuario);
 		}

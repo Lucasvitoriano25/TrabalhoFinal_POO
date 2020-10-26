@@ -1,8 +1,8 @@
 package profile;
 
-
 import java.util.Vector;
 
+import exceptions.PIException;
 import exceptions.UJCException;
 import exceptions.UNCException;
 
@@ -32,13 +32,33 @@ public class Vector_Usuario implements IRepositorioUsuario {
 	@Override
 	// MUDAR ATUALIZAR
 	public void atualizar(Perfil usuario) throws UNCException {
-		if (!vetor.contains(usuario)) {
+		Boolean aux = false;
+		for (Perfil obj : vetor) {
+			if (obj.getUsuario() == usuario.getUsuario()) {
+				obj = usuario;
+				aux = true;
+			}
+		}
+		if (aux == false) {
 			throw new UNCException(usuario);
 		}
+	}
+
+	@Override
+	public void remover(String usuario) throws PIException {
+		Boolean aux = false;
+		Perfil momentaneo=null;
 		for (Perfil obj : vetor) {
-			if (obj.equals(usuario)) {
-				obj = usuario;
+			if (obj.getUsuario().equals(usuario)) {
+				aux = true;
+				momentaneo=obj;
 			}
+		}
+		if(aux== true) {
+			vetor.remove(momentaneo);
+		}
+		if (aux == false) {
+			throw new PIException(usuario);
 		}
 	}
 

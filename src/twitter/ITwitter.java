@@ -29,5 +29,7 @@ public interface ITwitter {
 	public Vector<Perfil> seguidores(String usuario) throws PDException, PIException;
 
 	public Vector<Perfil> seguidos(String usuario) throws PDException, PIException;
-
+	
+	public void removerperfil(String usuario) throws PIException;
+	
 }

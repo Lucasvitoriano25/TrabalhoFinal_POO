@@ -14,6 +14,7 @@ public abstract class Perfil {
 
 	public Perfil(String usuario) {
 		this.usuario = usuario;
+		ativo=true;
 	}
 	
 	public void addSeguidor(Perfil usuario) {
@@ -22,6 +23,11 @@ public abstract class Perfil {
 		}
 	}
 	
+	@Override
+	public String toString() {
+		return "Perfil [getTimeline()=" + getTimeline() + "]";
+	}
+
 	public void addSeguido(Perfil usuario) {
 		if(usuario !=null) {
 			seguidos.add(usuario);
