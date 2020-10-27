@@ -51,13 +51,14 @@ public class MyTwitter implements ITwitter {
 			throw new PDException(usuario);
 		}
 
-		if (mensagem.length() >= 140 || mensagem.length() < 1) {
+		if (mensagem.length() >= 140) {
 			throw new MFPException();
 		}
 		Tweet tweet = new Tweet(usuario, mensagem);
 		Banco_de_Dados.buscar(usuario).addTweet(tweet);
 		for (Perfil obj : Banco_de_Dados.buscar(usuario).getSeguidores()) {
-			obj.addTweet(tweet);
+			if (obj.isAtivo() == true)
+				obj.addTweet(tweet);
 		}
 	}
 
@@ -69,8 +70,12 @@ public class MyTwitter implements ITwitter {
 		if (Banco_de_Dados.buscar(usuario).isAtivo() == false) {
 			throw new PDException(usuario);
 		}
-
-		return Banco_de_Dados.buscar(usuario).getTimeline();
+		Vector<Tweet> timeline = new Vector<>();
+		for(Tweet obj :Banco_de_Dados.buscar(usuario).getTimeline()) {
+			if(Banco_de_Dados.buscar(obj.getUsuario()).isAtivo()==true)
+				timeline.add(obj);
+			}
+		return timeline;
 	}
 
 	@Override
@@ -105,11 +110,15 @@ public class MyTwitter implements ITwitter {
 		if (Banco_de_Dados.buscar(seguidor).isAtivo() == false) {
 			throw new PDException(seguidor);
 		}
-		if (seguidor == seguido) {
+		if (seguidor.equals(seguido)) {
 			throw new SIException();
 		}
-		Banco_de_Dados.buscar(seguido).addSeguidor(Banco_de_Dados.buscar(seguidor));
-		Banco_de_Dados.buscar(seguidor).addSeguido(Banco_de_Dados.buscar(seguido));
+		if(!Banco_de_Dados.buscar(seguido).getSeguidores().contains(Banco_de_Dados.buscar(seguidor)))
+		{
+			Banco_de_Dados.buscar(seguido).addSeguidor(Banco_de_Dados.buscar(seguidor));
+			Banco_de_Dados.buscar(seguidor).addSeguido(Banco_de_Dados.buscar(seguido));
+
+		}
 	}
 
 	@Override
@@ -132,7 +141,12 @@ public class MyTwitter implements ITwitter {
 		if (Banco_de_Dados.buscar(usuario).isAtivo() == false) {
 			throw new PDException(usuario);
 		}
-		return Banco_de_Dados.buscar(usuario).getSeguidores();
+		Vector<Perfil> seguidores = new Vector<>();
+		for(Perfil obj :Banco_de_Dados.buscar(usuario).getSeguidores()) {
+			if(obj.isAtivo()==true)
+				seguidores.add(obj);
+			}
+		return seguidores;
 	}
 
 	@Override
@@ -143,8 +157,12 @@ public class MyTwitter implements ITwitter {
 		if (Banco_de_Dados.buscar(usuario).isAtivo() == false) {
 			throw new PDException(usuario);
 		}
-		return Banco_de_Dados.buscar(usuario).getSeguidos();
-
+		Vector<Perfil> seguidos = new Vector<>();
+		for(Perfil obj :Banco_de_Dados.buscar(usuario).getSeguidos()) {
+			if(obj.isAtivo()==true)
+				seguidos.add(obj);
+			}
+		return seguidos;
 	}
 
 }

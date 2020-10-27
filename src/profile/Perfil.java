@@ -23,10 +23,6 @@ public abstract class Perfil {
 		}
 	}
 	
-	@Override
-	public String toString() {
-		return "Perfil [getTimeline()=" + getTimeline() + "]";
-	}
 
 	public void addSeguido(Perfil usuario) {
 		if(usuario !=null) {
